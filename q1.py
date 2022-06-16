@@ -11,7 +11,7 @@ x_kernel = [[-1, 0, 1], [-2, 0, 2], [-1, 0, 1]]
 y_kernel = [[1, 2, 1], [0, 0, 0], [-1, -2, -1]]
 
 def get_gaussian_blur_img():
-    img = cv2.imread(img_prefix + 'edge.png', 0)
+    img = cv2.imread(img_prefix + 'edge.png', 0)# 讀取圖片
     # For debug
     # img = img[0:20, 0:20] 
     x, y = np.mgrid[-1:2, -1:2]
