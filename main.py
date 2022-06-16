@@ -27,7 +27,7 @@ class test_dialogue(QWidget):
 class GroupBox(QWidget):
 	def __init__(self):
 		QWidget.__init__(self)
-		self.setWindowTitle("影像處理")
+		self.setWindowTitle("影像處理分析")
 		layout = QGridLayout()
 		self.setLayout(layout)
 		self.setFixedSize(1400, 800)
