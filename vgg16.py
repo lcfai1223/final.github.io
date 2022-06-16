@@ -31,7 +31,7 @@ def get_params():
 import torch
 import torch.nn as nn
 
-
+#M為池化層，數字為輸出
 _cfg = {
     'VGG11': [64, 'M', 128, 'M', 256, 256, 'M', 512, 512, 'M', 512, 512, 'M'],
     'VGG13': [64, 64, 'M', 128, 128, 'M', 256, 256, 'M', 512, 512, 'M', 512, 512, 'M'],
@@ -39,7 +39,13 @@ _cfg = {
     'VGG19': [64, 64, 'M', 128, 128, 'M', 256, 256, 256, 256, 'M', 512, 512, 512, 512, 'M', 512, 512, 512, 512, 'M'],
 }
 
-
+#自定義每一層卷積層和池化層
+#kernal_size卷積層的尺寸
+#步幅stride
+# 填充方式padding
+#Conv2d卷積層计算
+##ReLU激活函数           
+# MaxPool2d池化層：最大池化
 def _make_layers(cfg):
     layers = []
     in_channels = 3
@@ -47,7 +53,7 @@ def _make_layers(cfg):
         if layer_cfg == 'M':
             layers.append(nn.MaxPool2d(kernel_size=2, stride=2))
         else:
-            layers.append(nn.Conv2d(in_channels=in_channels,
+            layers.append(nn.Conv2d(in_channels=in_channels, 
                                     out_channels=layer_cfg,
                                     kernel_size=3,
                                     stride=1,
@@ -68,11 +74,12 @@ class VGG(nn.Module):
         cfg = _cfg['VGG16']
         self.layers = _make_layers(cfg)
         flatten_features = 512
-        self.fc1 = nn.Linear(flatten_features, 10)
+        self.fc1 = nn.Linear(flatten_features, 10)#fully connected layer that outputs our 10 labels
         # self.fc2 = nn.Linear(4096, 4096)
         # self.fc3 = nn.Linear(4096, 10)
 
     def forward(self, x):
+        
         y = self.layers(x)
         y = y.view(y.size(0), -1)
         y = self.fc1(y)
@@ -88,6 +95,7 @@ def run():
     trainset = torchvision.datasets.CIFAR10(root='./data', train=True,
                                             download=True, transform=transform)
     # 將 dataset 製作成 dataloader 方便 model 取資料
+    #訓練數據加載器
     trainloader = torch.utils.data.DataLoader(trainset, batch_size=BATCH_SIZE,
                                             shuffle=True, num_workers=2)
 
@@ -99,12 +107,12 @@ def run():
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     print(device)
     net.to(device)
-
+#定義損失數以及優化方法
     import torch.optim as optim
 
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.SGD(net.parameters(), lr=LR, momentum=0.9)
-
+#訓練
     print('start traning.')
     train_len = len(trainloader)
     for epoch in range(EPOCH):  # loop over the dataset multiple times
@@ -133,7 +141,7 @@ def run():
             #     print('[ %.2f % ] loss: %.3f' %
             #           (100*(i/train_len), running_loss / 2000))
             #     running_loss = 0.0
-        
+        #准確度
         correct = 0
         total = 0
         with torch.no_grad():
